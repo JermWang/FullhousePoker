@@ -110,6 +110,45 @@ function Chip({ size = 20 }: { size?: number }) {
   );
 }
 
+/** Free room: live countdown until the server fills empty seats with AI
+ *  opponents (30s after a lone human sits with no real opponents to play). */
+function FreeRoomCountdown({ active }: { active: boolean }) {
+  const [secs, setSecs] = useState(30);
+  const startRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!active) {
+      startRef.current = null;
+      setSecs(30);
+      return;
+    }
+    startRef.current = Date.now();
+    setSecs(30);
+    const id = setInterval(() => {
+      const elapsed = Math.floor(
+        (Date.now() - (startRef.current ?? Date.now())) / 1000,
+      );
+      setSecs(Math.max(0, 30 - elapsed));
+    }, 250);
+    return () => clearInterval(id);
+  }, [active]);
+  if (!active) return null;
+  return (
+    <div className="mt-1 flex shrink-0 items-center justify-center gap-2 rounded-xl border border-velvet/30 bg-velvet/[0.08] px-3 py-2 text-sm text-ivory">
+      <span aria-hidden className="text-base">🤖</span>
+      {secs > 0 ? (
+        <span className="font-medium">
+          AI players join in{" "}
+          <span className="font-mono text-velvet">
+            0:{String(secs).padStart(2, "0")}
+          </span>
+        </span>
+      ) : (
+        <span className="font-medium text-velvet">AI players joining…</span>
+      )}
+    </div>
+  );
+}
+
 export function PokerTableView(props: PokerTableViewProps) {
   // Guests get a stable ephemeral id for the session; it's the playerId the ws
   // seats them under (demo tables only) and what we match "your seat" against.
@@ -216,6 +255,15 @@ export function PokerTableView(props: PokerTableViewProps) {
   const seated = !!yourSeat;
   const isYourTurn =
     yourSeat != null && state.yourTurnSeat === yourSeat.seat;
+
+  // Free room: you're seated alone at the demo table with no hand running, so
+  // the server's bot-fill timer (30s) is ticking toward AI opponents joining.
+  const occupiedSeats = table?.seats.filter((s) => s.playerId).length ?? 0;
+  const handInProgress =
+    table != null &&
+    (table.toActSeat != null || (table.community?.length ?? 0) > 0);
+  const waitingForAI =
+    !!props.demo && seated && !handInProgress && occupiedSeats < 2;
 
   // Live action clock for whichever seat is to act. Your own deadline arrives
   // reliably on ACTION_REQUIRED (state.actionDeadline); other seats fall back to
@@ -548,6 +596,9 @@ export function PokerTableView(props: PokerTableViewProps) {
           )}
         </div>
       </div>
+
+      {/* Free room: countdown to AI opponents filling the table. */}
+      <FreeRoomCountdown active={waitingForAI} />
 
       {/* Table on the left, betting + chat panel on the right. They sit
           side-by-side from lg up AND in any landscape orientation — phones are
