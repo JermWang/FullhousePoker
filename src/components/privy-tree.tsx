@@ -7,7 +7,12 @@ import {
   useWallets,
   useSignAndSendTransaction,
 } from "@privy-io/react-auth/solana";
-import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import {
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import bs58 from "bs58";
 import { PrivyConfiguredContext } from "./privy-context";
 import { setTokenGetter, authedFetch } from "@/lib/auth/privy-token";
@@ -48,23 +53,27 @@ function DepositBridge() {
       if (!res.ok || !prep.treasury || !prep.blockhash) {
         throw new Error(prep.error ?? "Could not prepare deposit");
       }
-      const tx = new Transaction({
-        feePayer: new PublicKey(wallet.address),
+      // Build a v0 VersionedTransaction (not a legacy Transaction). Wallets —
+      // Phantom/Blowfish especially — simulate v0 transactions reliably; a
+      // hand-serialized legacy tx with a zeroed signature placeholder is a
+      // common cause of failed simulation, which surfaces as a scary
+      // "this dApp could be malicious" block. One instruction, one signer
+      // (the user), fresh blockhash → a clean, simulatable transfer.
+      const payer = new PublicKey(wallet.address);
+      const message = new TransactionMessage({
+        payerKey: payer,
         recentBlockhash: prep.blockhash,
-      });
-      tx.add(
-        SystemProgram.transfer({
-          fromPubkey: new PublicKey(wallet.address),
-          toPubkey: new PublicKey(prep.treasury),
-          lamports,
-        }),
-      );
-      const serialized = tx.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false,
-      });
+        instructions: [
+          SystemProgram.transfer({
+            fromPubkey: payer,
+            toPubkey: new PublicKey(prep.treasury),
+            lamports,
+          }),
+        ],
+      }).compileToV0Message();
+      const vtx = new VersionedTransaction(message);
       const { signature } = await signAndSendTransaction({
-        transaction: new Uint8Array(serialized),
+        transaction: vtx.serialize(),
         wallet,
       });
       return { signature: bs58.encode(signature) };
