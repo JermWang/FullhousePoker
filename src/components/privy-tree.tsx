@@ -72,8 +72,35 @@ function DepositBridge() {
         ],
       }).compileToV0Message();
       const vtx = new VersionedTransaction(message);
+      const serialized = vtx.serialize();
+
+      // Pre-flight: simulate the transfer server-side BEFORE the wallet popup.
+      // Phantom hard-blocks ("could be malicious") any request it can't simulate
+      // cleanly — usually because the tx would FAIL on-chain (e.g. the wallet
+      // can't cover the amount + network fee). Catch that here and show a clear
+      // message instead of handing the wallet a doomed transaction.
+      try {
+        const simRes = await authedFetch("/api/solana/deposit-simulate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tx: Array.from(serialized) }),
+        });
+        const sim = (await simRes.json()) as { ok?: boolean; err?: string };
+        if (sim.ok === false) {
+          throw new Error(
+            "Wallet transfer can't be completed — make sure this wallet holds enough SOL to cover the buy-in plus the network fee.",
+          );
+        }
+      } catch (e) {
+        // Only the explicit sim-failure above should block; network hiccups fall
+        // through (the wallet remains the final arbiter).
+        if (e instanceof Error && e.message.startsWith("Wallet transfer can't")) {
+          throw e;
+        }
+      }
+
       const { signature } = await signAndSendTransaction({
-        transaction: vtx.serialize(),
+        transaction: serialized,
         wallet,
       });
       return { signature: bs58.encode(signature) };
