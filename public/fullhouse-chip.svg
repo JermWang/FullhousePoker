@@ -1,0 +1,27 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="fh-center" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#2a1550"/>
+      <stop offset="100%" stop-color="#140a28"/>
+    </radialGradient>
+    <linearGradient id="fh-text" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd98a"/>
+      <stop offset="55%" stop-color="#ffd24a"/>
+      <stop offset="100%" stop-color="#f5b820"/>
+    </linearGradient>
+  </defs>
+  <!-- neon chip ring -->
+  <circle cx="32" cy="32" r="31" fill="#1a1030"/>
+  <g>
+    <path d="M32 1 A31 31 0 0 1 58.8 16.5 L32 32 Z" fill="#3b82f6"/>
+    <path d="M58.8 47.5 A31 31 0 0 1 32 63 L32 32 Z" fill="#14d2c8"/>
+    <path d="M5.2 47.5 A31 31 0 0 1 5.2 16.5 L32 32 Z" fill="#3b82f6"/>
+    <path d="M32 1 A31 31 0 0 0 5.2 16.5 L32 32 Z" fill="#14d2c8"/>
+    <path d="M58.8 16.5 A31 31 0 0 1 58.8 47.5 L32 32 Z" fill="#3b82f6"/>
+    <path d="M32 63 A31 31 0 0 1 5.2 47.5 L32 32 Z" fill="#14d2c8"/>
+  </g>
+  <!-- dark marble center -->
+  <circle cx="32" cy="32" r="23" fill="url(#fh-center)" stroke="#ffd24a" stroke-opacity="0.45" stroke-width="1.5"/>
+  <!-- FH monogram -->
+  <text x="32" y="40" text-anchor="middle" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" font-size="20" letter-spacing="-1" fill="url(#fh-text)">FH</text>
+</svg>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background-color: #0d0420;
+    background-image:
+      radial-gradient(60rem 60rem at 82% -8%, rgba(255,61,127,0.10), transparent 60%),
+      radial-gradient(50rem 50rem at -8% 108%, rgba(20,210,200,0.12), transparent 60%);
+    background-attachment: fixed;
+    color: #f4eef7;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(255,61,127,0.32); color: #fff; }
+  @keyframes fh-sway { 0%,100%{ transform: rotateY(-9deg) rotateX(4deg) } 50%{ transform: rotateY(9deg) rotateX(4deg) } }
+  @keyframes fh-rise { from{ opacity:0; transform: translateY(14px) } to{ opacity:1; transform: translateY(0) } }
+  @keyframes fh-aura-a { 0%,100%{ transform: translate(0,0) scale(1) } 50%{ transform: translate(-44px,38px) scale(1.14) } }
+  @keyframes fh-aura-b { 0%,100%{ transform: translate(0,0) scale(1.05) } 50%{ transform: translate(46px,-34px) scale(0.92) } }
+  @keyframes fh-tube { 0%,100%{ opacity:1; text-shadow:0 0 8px rgba(255,61,127,0.6), 0 0 22px rgba(255,61,127,0.45), 0 0 44px rgba(255,61,127,0.3) } 47%{ opacity:0.96 } 50%{ opacity:0.82; text-shadow:0 0 6px rgba(255,61,127,0.4), 0 0 16px rgba(255,61,127,0.3) } }
+  @keyframes fh-spin { from{ transform: rotate(0) } to{ transform: rotate(360deg) } }
+</style>
+</helmet>
+
+<div aria-hidden="true" style="position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;">
+  <div style="position:absolute;top:-18%;left:54%;width:58vw;height:58vw;border-radius:50%;background:radial-gradient(circle at center, rgba(255,61,127,0.12), rgba(255,61,127,0.04) 42%, transparent 68%);filter:blur(40px);animation:fh-aura-a 24s ease-in-out infinite;"></div>
+  <div style="position:absolute;bottom:-24%;left:-14%;width:52vw;height:52vw;border-radius:50%;background:radial-gradient(circle at center, rgba(20,210,200,0.10), rgba(255,180,61,0.05) 45%, transparent 70%);filter:blur(44px);animation:fh-aura-b 30s ease-in-out infinite;"></div>
+</div>
+
+<!-- ============ MASTHEAD ============ -->
+<section data-screen-label="Masthead" style="position:relative;overflow:hidden;padding:40px 32px 96px;border-bottom:1px solid rgba(255,255,255,0.07);background:radial-gradient(120% 90% at 50% -20%, rgba(20,210,200,0.16), transparent 60%);">
+  <div style="max-width:1140px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:46px;align-self:flex-start;">
+      <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,180,61,0.5);background:radial-gradient(circle at 50% 35%, rgba(255,180,61,0.22), rgba(255,61,127,0.1));font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.04em;color:#ffb43d;line-height:1;">FH</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;letter-spacing:-0.01em;">Fullhouse</span>
+    </div>
+
+    <div style="position:relative;perspective:1300px;height:300px;width:100%;display:grid;place-items:center;margin-bottom:6px;">
+      <div style="position:relative;width:540px;height:260px;transform-style:preserve-3d;animation:fh-sway 14s ease-in-out infinite;">
+        <div style="position:absolute;left:50%;bottom:0;margin-left:-49px;transform:rotate(-26deg);transform-origin:50% 168%;">
+          <dc-import name="Card3D" rank="10" suit="h" size="lg" tilt="{{ off }}" hint-size="98px,137px"></dc-import>
+        </div>
+        <div style="position:absolute;left:50%;bottom:0;margin-left:-49px;transform:rotate(-13deg);transform-origin:50% 168%;">
+          <dc-import name="Card3D" rank="J" suit="h" size="lg" tilt="{{ off }}" hint-size="98px,137px"></dc-import>
+        </div>
+        <div style="position:absolute;left:50%;bottom:6px;margin-left:-49px;transform:rotate(0deg);transform-origin:50% 168%;">
+          <dc-import name="Card3D" rank="Q" suit="h" size="lg" tilt="{{ off }}" glow="{{ on }}" hint-size="98px,137px"></dc-import>
+        </div>
+        <div style="position:absolute;left:50%;bottom:0;margin-left:-49px;transform:rotate(13deg);transform-origin:50% 168%;">
+          <dc-import name="Card3D" rank="K" suit="h" size="lg" tilt="{{ off }}" hint-size="98px,137px"></dc-import>
+        </div>
+        <div style="position:absolute;left:50%;bottom:0;margin-left:-49px;transform:rotate(26deg);transform-origin:50% 168%;">
+          <dc-import name="Card3D" rank="A" suit="h" size="lg" tilt="{{ off }}" hint-size="98px,137px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin:22px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">Visual identity · neon after-dark</p>
+    <h1 style="margin:16px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:80px;line-height:0.98;letter-spacing:-0.03em;">Same room.<br><span style="color:#ff3d7f;animation:fh-tube 5.5s ease-in-out infinite;">Lights on.</span></h1>
+    <p style="margin:24px 0 0;max-width:62ch;font-size:18px;line-height:1.65;color:#a594c2;">Fullhouse is the reskin of Velvet from a cold velvet vault into a packed, neon-lit card house. Deep-plum night, electric magenta and amber, glowing teal felt — the same restrained product, now buzzing and alive. Every gameplay object keeps its exact size; only the skin changes.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;">
+      <span style="font-size:13px;color:#d4c9ec;padding:8px 15px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);">Plum · Teal · Magenta · Amber</span>
+      <span style="font-size:13px;color:#d4c9ec;padding:8px 15px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);">Space Grotesk · Hanken · JetBrains Mono</span>
+      <span style="font-size:13px;color:#d4c9ec;padding:8px 15px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);">Drop-in reskin · same sizing</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE MARK ============ -->
+<section data-screen-label="The Mark" style="padding:88px 32px;border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:1140px;margin:0 auto;">
+    <p style="margin:0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">01 · The mark</p>
+    <h2 style="margin:14px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:44px;line-height:1.04;letter-spacing:-0.02em;">From an engraved “V” to a glowing FH chip</h2>
+    <p style="margin:16px 0 0;max-width:64ch;font-size:17px;line-height:1.65;color:#a594c2;">Velvet's quiet monogram becomes a chip you'd actually want to stack: an amber FH on black marble, ringed in magenta and teal neon. It reads at 20px in the nav and at 280px on the felt.</p>
+
+    <div style="margin-top:44px;display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;">
+      <!-- hero chip -->
+      <div style="position:relative;display:grid;place-items:center;width:280px;height:280px;">
+        <div style="position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(closest-side, rgba(255,61,127,0.4), transparent 72%);filter:blur(8px);"></div>
+        <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#1a1030 0 30deg,#ff3d7f 30deg 60deg,#1a1030 60deg 90deg,#14d2c8 90deg 120deg,#1a1030 120deg 150deg,#ff3d7f 150deg 180deg,#1a1030 180deg 210deg,#14d2c8 210deg 240deg,#1a1030 240deg 270deg,#ff3d7f 270deg 300deg,#1a1030 300deg 330deg,#14d2c8 330deg 360deg);animation:fh-spin 26s linear infinite;box-shadow:0 22px 50px -18px rgba(0,0,0,0.8);"></div>
+        <div style="position:absolute;inset:24px;border-radius:50%;background:radial-gradient(circle at 50% 35%, #2a1550, #140a28);box-shadow:inset 0 0 0 2px rgba(255,180,61,0.45), inset 0 0 40px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,61,127,0.25);"></div>
+        <div style="position:relative;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:96px;letter-spacing:-0.06em;background:linear-gradient(180deg,#ffd98a,#ffb43d 55%,#e8951f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(255,180,61,0.4));">FH</div>
+      </div>
+
+      <!-- wordmark constructions -->
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:24px 26px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,180,61,0.5);background:radial-gradient(circle at 50% 35%, rgba(255,180,61,0.22), rgba(255,61,127,0.1));font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.04em;color:#ffb43d;">FH</span>
+          <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-0.02em;">Fullhouse</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:24px 26px;border-radius:16px;border:1px solid rgba(255,61,127,0.3);background:rgba(255,61,127,0.06);">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,180,61,0.5);background:#140a28;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.04em;color:#ffb43d;">FH</span>
+          <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;letter-spacing:-0.02em;">Full<span style="color:#ff3d7f;text-shadow:0 0 18px rgba(255,61,127,0.5);">house</span></span>
+        </div>
+        <p style="margin:2px 4px 0;font-size:14px;line-height:1.6;color:#8173a3;">The neon split — white “Full”, magenta “house” — is the loud variant for marketing surfaces. The flat amber wordmark is the workhorse for nav and chrome.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PALETTE + TYPE ============ -->
+<section data-screen-label="Palette and Type" style="padding:88px 32px;border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:1140px;margin:0 auto;">
+    <p style="margin:0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">02 · Palette &amp; type</p>
+    <h2 style="margin:14px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:44px;line-height:1.04;letter-spacing:-0.02em;">Five colours, three weights of voice</h2>
+
+    <div style="margin-top:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px;">
+      <sc-for list="{{ swatches }}" as="c" hint-placeholder-count="5">
+        <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.02);">
+          <div style="height:96px;background:{{ c.hex }};box-shadow:{{ c.glow }};"></div>
+          <div style="padding:13px 14px;">
+            <div style="font-size:14px;font-weight:600;color:#f4eef7;">{{ c.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8173a3;margin-top:3px;">{{ c.hex }}</div>
+            <div style="font-size:11.5px;color:#a594c2;margin-top:6px;line-height:1.4;">{{ c.use }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div style="padding:30px 32px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.22em;color:#8173a3;">Display · Space Grotesk</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:58px;letter-spacing:-0.03em;line-height:1;margin-top:14px;">Aa Kk Qq</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;letter-spacing:-0.01em;margin-top:12px;color:#d4c9ec;">Confident, contemporary, a little electric.</div>
+      </div>
+      <div style="padding:30px 32px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.22em;color:#8173a3;">Body · Hanken &nbsp;/&nbsp; Numbers · JetBrains Mono</div>
+        <div style="font-size:17px;line-height:1.6;margin-top:14px;color:#d4c9ec;">Clean grotesk for every label, stack and message — quiet enough to disappear under the neon.</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;margin-top:16px;color:#ffd9a0;">2,480 · 5 / 10 · ALL-IN</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARD SYSTEM ============ -->
+<section data-screen-label="Card System" style="padding:88px 32px;border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:1140px;margin:0 auto;">
+    <p style="margin:0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">03 · The cards</p>
+    <h2 style="margin:14px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:44px;line-height:1.04;letter-spacing:-0.02em;">Cool-white faces, neon-crosshatch backs</h2>
+    <p style="margin:16px 0 0;max-width:64ch;font-size:17px;line-height:1.65;color:#a594c2;">Pips stay instantly readable: deep-plum blacks, magenta reds. Face-down cards carry the FH crest over a magenta-and-teal weave. Hover the hero card to tilt it. Dimensions are untouched from Velvet.</p>
+
+    <div style="margin-top:44px;display:grid;grid-template-columns:auto 1fr;gap:54px;align-items:center;">
+      <div style="display:grid;place-items:center;width:300px;height:300px;">
+        <dc-import name="Card3D" rank="A" suit="h" size="hero" tilt="{{ on }}" float="{{ on }}" glow="{{ on }}" hint-size="152px,214px"></dc-import>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <dc-import name="Card" rank="A" suit="s" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="K" suit="h" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="Q" suit="d" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="J" suit="c" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="A" suit="s" face-down="{{ on }}" w="74" h="104" hint-size="74px,104px"></dc-import>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <dc-import name="Card" rank="10" suit="h" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="9" suit="c" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="7" suit="d" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="2" suit="s" w="74" h="104" hint-size="74px,104px"></dc-import>
+          <dc-import name="Card" rank="A" suit="s" face-down="{{ on }}" w="74" h="104" hint-size="74px,104px"></dc-import>
+        </div>
+        <p style="margin:2px 0 0;font-size:13.5px;color:#8173a3;">2D faces for the felt and lists · 3D hero card for moments of emphasis · shared crest on every back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BANNER ============ -->
+<section data-screen-label="Banner" style="padding:88px 32px;border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:1140px;margin:0 auto;">
+    <p style="margin:0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">04 · Marketing banner</p>
+    <h2 style="margin:14px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:44px;line-height:1.04;letter-spacing:-0.02em;">The new social banner</h2>
+
+    <div style="margin-top:36px;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/1;border:1px solid rgba(255,255,255,0.1);background:radial-gradient(120% 140% at 18% 30%, #2a1550 0%, #160a2e 48%, #0b0418 100%);box-shadow:0 40px 90px -40px rgba(0,0,0,0.9);">
+      <div style="position:absolute;top:-30%;left:8%;width:50%;height:120%;background:radial-gradient(circle at 30% 40%, rgba(255,61,127,0.28), transparent 60%);filter:blur(30px);"></div>
+      <div style="position:absolute;bottom:-40%;right:4%;width:55%;height:140%;background:radial-gradient(circle at 60% 40%, rgba(20,210,200,0.22), transparent 62%);filter:blur(30px);"></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 7% 0 7%;">
+        <div style="position:relative;z-index:2;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:72px;line-height:0.95;letter-spacing:-0.03em;color:#f4eef7;">Full<span style="color:#ff3d7f;text-shadow:0 0 14px rgba(255,61,127,0.6),0 0 36px rgba(255,61,127,0.4);">house</span></div>
+          <div style="margin-top:18px;display:inline-flex;align-items:center;gap:10px;">
+            <span style="width:30px;height:1px;background:rgba(255,180,61,0.6);"></span>
+            <span style="font-size:17px;letter-spacing:0.04em;color:#cdbce8;">Private room poker on Solana</span>
+          </div>
+        </div>
+        <div style="position:relative;z-index:2;perspective:1000px;width:280px;height:200px;">
+          <div style="position:absolute;left:14%;bottom:8%;transform:rotate(-16deg);"><dc-import name="Card3D" rank="A" suit="s" size="md" tilt="{{ off }}" hint-size="66px,92px"></dc-import></div>
+          <div style="position:absolute;left:44%;bottom:14%;transform:rotate(6deg);"><dc-import name="Card3D" rank="A" suit="h" size="md" tilt="{{ off }}" glow="{{ on }}" hint-size="66px,92px"></dc-import></div>
+        </div>
+      </div>
+    </div>
+    <p style="margin:16px 2px 0;font-size:13.5px;color:#8173a3;">Direct successor to Velvet's black-and-blood-red banner — same composition, recharged with neon. Drop the wordmark left, hero cards right, glow behind.</p>
+  </div>
+</section>
+
+<!-- ============ COMPONENTS ============ -->
+<section data-screen-label="Components" style="padding:88px 32px 110px;">
+  <div style="max-width:1140px;margin:0 auto;">
+    <p style="margin:0;font-size:12px;text-transform:uppercase;letter-spacing:0.3em;color:#14d2c8;">05 · UI atoms</p>
+    <h2 style="margin:14px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:44px;line-height:1.04;letter-spacing:-0.02em;">The pieces, recoloured</h2>
+
+    <div style="margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+      <!-- buttons -->
+      <div style="padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.22em;color:#8173a3;margin-bottom:18px;">Action buttons</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="font-size:15px;font-weight:600;color:#fff;text-align:center;background:linear-gradient(180deg,#ff5c93,#e0286a);padding:13px 0;border-radius:11px;box-shadow:0 8px 20px -8px rgba(255,61,127,0.7), inset 0 1px 0 rgba(255,255,255,0.18);">Raise to 240</div>
+          <div style="font-size:15px;font-weight:600;color:#1a0f33;text-align:center;background:linear-gradient(180deg,#ffc560,#ffb43d);padding:13px 0;border-radius:11px;box-shadow:0 8px 20px -8px rgba(255,180,61,0.6);">All-in</div>
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;font-size:14px;font-weight:600;color:#f4eef7;text-align:center;background:#2a1a4a;border:1px solid rgba(255,255,255,0.12);padding:12px 0;border-radius:11px;">Call 40</div>
+            <div style="flex:1;font-size:14px;color:#c7bbe0;text-align:center;background:transparent;border:1px solid rgba(255,255,255,0.16);padding:12px 0;border-radius:11px;">Fold</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- chips + pot -->
+      <div style="padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.22em;color:#8173a3;margin-bottom:18px;">Chips &amp; pot</div>
+        <div style="display:flex;align-items:center;gap:18px;">
+          <span style="position:relative;display:inline-block;width:54px;height:54px;"><span style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#ff3d7f 0 30deg,#f4eef7 30deg 60deg,#ff3d7f 60deg 90deg,#f4eef7 90deg 120deg,#ff3d7f 120deg 150deg,#f4eef7 150deg 180deg,#ff3d7f 180deg 210deg,#f4eef7 210deg 240deg,#ff3d7f 240deg 270deg,#f4eef7 270deg 300deg,#ff3d7f 300deg 330deg,#f4eef7 330deg 360deg);box-shadow:0 -4px 0 -1px #c41f5a, 0 -8px 0 -2px #ff3d7f, inset 0 0 0 6px rgba(255,255,255,0.14), inset 0 0 0 8px #ffb43d;"></span></span>
+          <div style="display:flex;align-items:center;gap:9px;background:rgba(14,5,36,0.62);border:1px solid rgba(255,61,127,0.35);border-radius:999px;padding:8px 18px 8px 11px;">
+            <span style="font-size:12px;color:#a594c2;">Pot</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#ffd9a0;">1,240</span>
+          </div>
+        </div>
+        <div style="margin-top:20px;height:6px;border-radius:999px;background:linear-gradient(90deg,#ff3d7f,#ffb43d);"></div>
+        <div style="margin-top:8px;font-size:12px;color:#8173a3;">Bet slider track · magenta → amber</div>
+      </div>
+
+      <!-- seat -->
+      <div style="padding:28px;border-radius:16px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.03);display:grid;place-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="position:relative;">
+            <div style="width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:14px;background:rgba(255,61,127,0.22);border:2px solid #ff3d7f;color:#f4eef7;box-shadow:0 0 0 2px #ff3d7f, 0 0 24px rgba(255,61,127,0.6);">YOU</div>
+            <span style="position:absolute;bottom:-3px;right:-3px;width:20px;height:20px;border-radius:50%;background:#ffb43d;color:#1a0f33;font-size:11px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px #160a2e;">D</span>
+          </div>
+          <div style="margin-top:-6px;min-width:96px;border-radius:999px;padding:5px 13px 6px;text-align:center;background:rgba(255,61,127,0.42);border:1px solid rgba(255,255,255,0.09);">
+            <div style="font-size:12px;color:#f4eef7;">You</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#ffd9a0;">2,480</div>
+          </div>
+          <div style="margin-top:8px;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:#bdb0d6;background:rgba(14,5,36,0.85);border:1px solid rgba(255,255,255,0.09);border-radius:6px;padding:3px 10px;">Active seat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      on: true,
+      off: false,
+      swatches: [
+        { name: "Night",   hex: "#1a1030", glow: "none", use: "Base surface, chrome, felt rail" },
+        { name: "Felt",    hex: "#0e5d5a", glow: "inset 0 0 30px rgba(20,210,200,0.4)", use: "Table felt, online status" },
+        { name: "Magenta", hex: "#ff3d7f", glow: "0 0 26px rgba(255,61,127,0.5)", use: "Primary accent, raise, turn" },
+        { name: "Amber",   hex: "#ffb43d", glow: "0 0 26px rgba(255,180,61,0.45)", use: "Mark, all-in, winnings" },
+        { name: "Ivory",   hex: "#f4eef7", glow: "none", use: "Primary text on dark" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
