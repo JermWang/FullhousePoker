@@ -93,7 +93,7 @@ export default function StartScreen() {
           <Link href="/legal/privacy" className="hover:text-ivory">Privacy</Link>
           <span aria-hidden className="hidden h-3.5 w-px bg-white/15 sm:inline-block" />
           <a
-            href="https://x.com/velvetpokerfun"
+            href="https://x.com/_FullHousePoker"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Fullhouse Poker on X"

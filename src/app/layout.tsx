@@ -71,9 +71,10 @@ export const metadata: Metadata = {
     url: "/",
   },
   // Twitter/X card — `summary_large_image` uses the same generated share image.
-  // Add `site`/`creator` (the @handle) once the new social account is set.
   twitter: {
     card: "summary_large_image",
+    site: "@_FullHousePoker",
+    creator: "@_FullHousePoker",
     title: TITLE,
     description: SHARE_DESC,
   },

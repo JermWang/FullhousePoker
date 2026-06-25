@@ -28,7 +28,7 @@ export function ReferralPanel({
 
   const link = useMemo(() => {
     const origin =
-      typeof window !== "undefined" ? window.location.origin : "https://www.velvetpoker.fun";
+      typeof window !== "undefined" ? window.location.origin : "https://www.fullhousepoker.fun";
     return `${origin}/?ref=${code}`;
   }, [code]);
 

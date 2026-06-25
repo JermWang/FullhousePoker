@@ -16,7 +16,7 @@ export function PrivateInviteBar({
 }) {
   const [copied, setCopied] = useState(false);
   // Build the absolute link client-side so it carries the real origin
-  // (velvetpoker.fun) rather than a guessed/relative one.
+  // (fullhousepoker.fun) rather than a guessed/relative one.
   const [link, setLink] = useState(`/app/tables/${tableId}`);
   useEffect(() => {
     setLink(`${window.location.origin}/app/tables/${tableId}`);
