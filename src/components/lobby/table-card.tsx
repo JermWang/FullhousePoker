@@ -14,15 +14,13 @@ function fmtUsd(n: number): string {
 function shownUsd(n: number): number {
   return n >= 1 ? Math.round(n) : Math.round(n * 100) / 100;
 }
-// SOL translation of the headline USD — tidy, ~2 significant figures, no noise.
+// SOL translation of the headline USD — always 2 decimal places on lobby cards.
 function fmtSol(n: number): string {
-  if (n <= 0) return "0";
-  if (n >= 1) {
-    const r = Math.round(n * 10) / 10;
-    return Number.isInteger(r) ? r.toFixed(0) : r.toFixed(1);
-  }
-  if (n >= 0.01) return n.toFixed(2);
-  return n.toFixed(4);
+  return (n > 0 ? n : 0).toFixed(2);
+}
+// Custom house token on lobby cards — whole numbers only (no decimals).
+function fmtToken(native: string): string {
+  return Math.round(Number(native)).toLocaleString("en-US");
 }
 
 /** Convert a base-unit amount to a USD value for display (null when unpriced). */
@@ -52,7 +50,7 @@ function priced(
     // amount you'll actually wager. SOL/USDC tables show the SOL equivalent.
     const subtext =
       asset === "TOKEN"
-        ? `≈ ${parts.map((p) => p.native).join(sep)} ${sym}`
+        ? `≈ ${parts.map((p) => fmtToken(p.native)).join(sep)} ${sym}`
         : solUsd
           ? `≈ ${parts.map((p) => fmtSol(shownUsd(p.usd as number) / solUsd)).join(sep)} SOL`
           : null;
@@ -62,7 +60,7 @@ function priced(
   if (asset === "TOKEN") {
     return {
       primary: "—",
-      subtext: `${parts.map((p) => p.native).join(sep)} ${sym}`,
+      subtext: `${parts.map((p) => fmtToken(p.native)).join(sep)} ${sym}`,
     };
   }
   // Feed down for SOL/USDC → fall back to the native amount.
@@ -183,7 +181,7 @@ export function TableCard({
             label="Blinds"
             value={
               table.isDemo
-                ? `${formatAmount(table.asset, table.smallBlind)} / ${formatAmount(table.asset, table.bigBlind)}`
+                ? `${fmtSol(Number(formatAmount(table.asset, table.smallBlind)))} / ${fmtSol(Number(formatAmount(table.asset, table.bigBlind)))}`
                 : blinds.primary
             }
             subtext={table.isDemo ? null : blinds.subtext}
