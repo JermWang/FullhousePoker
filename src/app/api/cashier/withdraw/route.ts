@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
 import { getCurrentUser } from "@/lib/auth/require-user";
-import { parseAmount } from "@/lib/ledger/money";
+import { parseAmount, formatAmount } from "@/lib/ledger/money";
 import { requestWithdrawal } from "@/lib/solana/withdrawals";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { tooMany } from "@/lib/security/rate-limit";
@@ -56,9 +56,22 @@ export async function POST(req: Request) {
       action: "WITHDRAWAL_REQUESTED",
       targetType: "Withdrawal",
       targetId: result.withdrawalId,
-      metadata: { asset: parsed.data.asset, amount: amount.toString() },
+      metadata: {
+        asset: parsed.data.asset,
+        amount: amount.toString(),
+        feeAmount: result.feeAmount.toString(),
+        feeExempt: result.feeExempt,
+      },
     });
-    return NextResponse.json(result);
+    return NextResponse.json({
+      withdrawalId: result.withdrawalId,
+      status: result.status,
+      requiresReview: result.requiresReview,
+      feeExempt: result.feeExempt,
+      // Decimal strings for display (BigInt isn't JSON-serialisable).
+      feeAmount: formatAmount(parsed.data.asset, result.feeAmount),
+      netAmount: formatAmount(parsed.data.asset, result.netAmount),
+    });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Withdrawal failed" },

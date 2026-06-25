@@ -19,11 +19,18 @@ import {
 } from "@/lib/ledger/ledger";
 import { recordRiskEvent, recordOpsFailure } from "@/lib/risk/risk-events";
 import { getSolanaProvider } from "./connection";
+import { quoteWithdrawalFee } from "./withdrawal-fee";
 
 export interface RequestWithdrawalResult {
   withdrawalId: string;
   status: "PENDING_REVIEW" | "APPROVED";
   requiresReview: boolean;
+  /** Estimated fee (base units) for the UI; the charged fee is finalised at send. */
+  feeAmount: bigint;
+  /** Estimated amount the user will receive on-chain (amount − fee). */
+  netAmount: bigint;
+  /** True when the user qualifies for the $FULLHOUSE holder waiver. */
+  feeExempt: boolean;
 }
 
 /**
@@ -37,6 +44,21 @@ export async function requestWithdrawal(params: {
   toAddress: string;
 }): Promise<RequestWithdrawalResult> {
   if (params.amount <= 0n) throw new Error("Amount must be positive");
+
+  // Best-effort fee estimate for the UI. The on-chain holder check is network
+  // I/O, so it runs OUTSIDE the DB transaction below; the authoritative fee is
+  // re-computed when the withdrawal is actually sent. Never let a fee-display
+  // hiccup block a withdrawal — fall back to "no estimate".
+  let feeQuote = { fee: 0n, net: params.amount, exempt: false };
+  try {
+    const q = await quoteWithdrawalFee({
+      userId: params.userId,
+      amount: params.amount,
+    });
+    feeQuote = { fee: q.fee, net: q.net, exempt: q.exempt };
+  } catch {
+    /* show the request without a fee estimate */
+  }
 
   return prisma.$transaction(async (tx) => {
     // Double-submit / idempotency guard: refuse a second identical request
@@ -120,6 +142,9 @@ export async function requestWithdrawal(params: {
       withdrawalId: withdrawal.id,
       status: withdrawal.status as "PENDING_REVIEW" | "APPROVED",
       requiresReview,
+      feeAmount: feeQuote.fee,
+      netAmount: feeQuote.net,
+      feeExempt: feeQuote.exempt,
     };
   });
 }
@@ -146,13 +171,23 @@ export async function sendApprovedWithdrawal(
   });
   if (!withdrawal) throw new Error("Withdrawal not found");
 
+  // Authoritative fee, computed at send time (on-chain holder check). The user
+  // receives the NET; the fee stays in custody as PLATFORM_REVENUE. `amount` is
+  // the gross that was locked, so a reject/fail still refunds in full.
+  const quote = await quoteWithdrawalFee({
+    userId: withdrawal.userId,
+    amount: withdrawal.amount,
+  });
+  const fee = quote.fee;
+  const netAmount = withdrawal.amount - fee;
+
   const provider = getSolanaProvider();
   let txSignature: string;
   try {
     const res = await provider.sendTransfer({
       asset: withdrawal.asset,
       toAddress: withdrawal.toAddress,
-      amount: withdrawal.amount,
+      amount: netAmount,
       idempotencyKey: withdrawal.id,
     });
     txSignature = res.txSignature;
@@ -167,8 +202,14 @@ export async function sendApprovedWithdrawal(
         userId: withdrawal.userId,
         asset: withdrawal.asset,
         amount: withdrawal.amount,
+        fee,
         correlationId: `withdrawal-sent:${withdrawal.id}`,
-        metadata: { txSignature },
+        metadata: {
+          txSignature,
+          fee: fee.toString(),
+          netAmount: netAmount.toString(),
+          feeExempt: quote.exempt,
+        },
       },
       tx,
     );

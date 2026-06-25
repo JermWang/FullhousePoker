@@ -87,10 +87,17 @@ export function CashierPanel({
       setWError(json.error ?? "Withdrawal failed");
       return;
     }
+    // Fee summary: $FULLHOUSE holders are waived; everyone else pays 1%.
+    const feeNote = json.feeExempt
+      ? ` No withdrawal fee — $FULLHOUSE holder. You'll receive the full ${wAmount} ${label(wAsset)}.`
+      : json.feeAmount && Number(json.feeAmount) > 0
+        ? ` A 1% fee of ${json.feeAmount} ${label(wAsset)} applies — you'll receive ${json.netAmount} ${label(wAsset)}.`
+        : "";
     setWMessage(
-      json.requiresReview
+      (json.requiresReview
         ? "Withdrawal submitted — it'll be reviewed, then sent on-chain. Track its status in your history below."
-        : "Withdrawal requested — sending on-chain now. Track its status in your history below; a Solscan link appears once it lands (and it's auto-refunded if a send ever fails).",
+        : "Withdrawal requested — sending on-chain now. Track its status in your history below; a Solscan link appears once it lands (and it's auto-refunded if a send ever fails).") +
+        feeNote,
     );
     router.refresh();
   }
@@ -197,6 +204,10 @@ export function CashierPanel({
                 onChange={(e) => setWAmount(e.target.value)}
                 required
               />
+              <p className="mt-1 text-[11px] text-ash/70">
+                A 1% withdrawal fee applies —{" "}
+                <span className="text-ivory">waived for $FULLHOUSE holders</span>.
+              </p>
             </div>
             <div>
               <div className="flex items-center justify-between">

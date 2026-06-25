@@ -348,27 +348,37 @@ export async function lockWithdrawal(
   );
 }
 
-/** Withdrawal sent on-chain: pending -> treasury out. */
+/**
+ * Withdrawal sent on-chain: pending -> treasury out. When a withdrawal fee was
+ * charged, only the NET (amount − fee) actually leaves the treasury on-chain;
+ * the fee stays in custody and is recognised as PLATFORM_REVENUE. `amount` is
+ * the GROSS that was locked, so the pending liability clears exactly.
+ */
 export async function settleWithdrawalSent(
   params: {
     userId: string;
     asset: Asset;
     amount: bigint;
+    fee?: bigint;
     correlationId: string;
     metadata?: Record<string, unknown>;
   },
   tx?: Tx,
 ): Promise<void> {
+  const fee = params.fee && params.fee > 0n ? params.fee : 0n;
+  const net = params.amount - fee;
+  const legs = [
+    leg.system("WITHDRAWAL_PENDING", "DEBIT", params.amount),
+    leg.system("TREASURY_CASH", "CREDIT", net),
+  ];
+  if (fee > 0n) legs.push(leg.system("PLATFORM_REVENUE", "CREDIT", fee));
   await postLedgerTransaction(
     {
       asset: params.asset,
       reason: "WITHDRAWAL_SENT",
       correlationId: params.correlationId,
       metadata: params.metadata,
-      legs: [
-        leg.system("WITHDRAWAL_PENDING", "DEBIT", params.amount),
-        leg.system("TREASURY_CASH", "CREDIT", params.amount),
-      ],
+      legs,
     },
     tx,
   );

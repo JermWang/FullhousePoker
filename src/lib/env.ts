@@ -62,6 +62,17 @@ export const env = {
   minWithdrawalReviewLamports: BigInt(
     optional("MIN_WITHDRAWAL_REVIEW_LAMPORTS") ?? "1000000000",
   ),
+  // Withdrawal fee: a flat percentage skimmed from every withdrawal, EXCEPT for
+  // on-chain holders of the house token ($FULLHOUSE). 100 bps = 1%. The fee is
+  // realized only when the withdrawal is actually SENT (so rejected/failed
+  // requests always refund in full) and is booked to PLATFORM_REVENUE.
+  withdrawalFeeBps: BigInt(optional("WITHDRAWAL_FEE_BPS") ?? "100"), // 1%
+  // Minimum on-chain $FULLHOUSE holding (base units) that waives the fee. 0 →
+  // any non-zero balance qualifies. The waiver only works once TOKEN_MINT is
+  // configured; until then every withdrawal pays the fee.
+  withdrawalFeeExemptMinToken: BigInt(
+    optional("WITHDRAWAL_FEE_EXEMPT_MIN_TOKEN") ?? "0",
+  ),
   // Per-user withdrawal velocity. Exceeding the rolling-24h count OR the
   // per-asset amount cap forces the request into manual review (it never
   // hard-blocks the user). Tune for your float; defaults are conservative.
