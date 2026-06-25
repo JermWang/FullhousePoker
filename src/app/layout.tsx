@@ -29,8 +29,20 @@ const mono = JetBrains_Mono({
 // Canonical site URL — used to resolve the share image to an absolute URL.
 // Set NEXT_PUBLIC_SITE_URL on the host once the real domain is live; falls back
 // to the current Railway deployment so share cards work today.
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-production-c5fb7.up.railway.app";
+// Resolved defensively: an empty, protocol-less, or malformed value must NEVER
+// throw here, because this runs at module load and would crash every page.
+function resolveSiteUrl(): string {
+  const fallback = "https://web-production-c5fb7.up.railway.app";
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return fallback;
+  const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    return new URL(candidate).origin;
+  } catch {
+    return fallback;
+  }
+}
+const SITE_URL = resolveSiteUrl();
 
 const TITLE = `${APP_NAME_FULL} — Private real-money poker on Solana`;
 const SHARE_DESC =
