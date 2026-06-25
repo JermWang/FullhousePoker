@@ -26,18 +26,44 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+// Canonical site URL — used to resolve the share image to an absolute URL.
+// Set NEXT_PUBLIC_SITE_URL on the host once the real domain is live; falls back
+// to the current Railway deployment so share cards work today.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-production-c5fb7.up.railway.app";
+
+const TITLE = `${APP_NAME_FULL} — Private real-money poker on Solana`;
+const SHARE_DESC =
+  "Private real-money poker on Solana — transparent hands, instant crypto settlement. Real money. Real nerve. After dark.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${APP_NAME_FULL} — Private real-money poker on Solana`,
+    default: TITLE,
     template: `%s · ${APP_NAME_FULL}`,
   },
-  description:
-    "A private, elegant real-money poker room on Solana. Transparent hands, professional custody, instant crypto settlement.",
+  description: SHARE_DESC,
   robots: { index: false, follow: false },
   icons: {
     icon: [{ url: "/fullhouse-chip.svg", type: "image/svg+xml" }],
     shortcut: "/fullhouse-chip.svg",
     apple: "/fullhouse-chip.svg",
+  },
+  // Open Graph (Facebook, Discord, iMessage, etc.). The share image comes from
+  // src/app/opengraph-image.tsx, which Next injects automatically.
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME_FULL,
+    title: TITLE,
+    description: SHARE_DESC,
+    url: "/",
+  },
+  // Twitter/X card — `summary_large_image` uses the same generated share image.
+  // Add `site`/`creator` (the @handle) once the new social account is set.
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: SHARE_DESC,
   },
 };
 
