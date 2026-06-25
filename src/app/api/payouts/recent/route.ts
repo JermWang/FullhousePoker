@@ -3,6 +3,10 @@ import { prisma } from "@/lib/db/prisma";
 import { formatAmount, ASSET_SYMBOLS } from "@/lib/ledger/money";
 import { solscanTxUrl } from "@/lib/solana/explorer";
 
+// Live DB-backed feed — must run per request, never prerendered at build (the
+// build env has no DATABASE_URL, and the data must be fresh anyway).
+export const dynamic = "force-dynamic";
+
 /**
  * Public, read-only feed of REAL on-chain payouts for the splash-page ticker —
  * only SENT withdrawals (actual transfers that landed), never requested/failed

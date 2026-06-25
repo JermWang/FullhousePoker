@@ -1,16 +1,21 @@
 import { ImageResponse } from "next/og";
 
 // Social share card (Open Graph + Twitter). Next auto-wires this file as the
-// og:image / twitter:image for the site. Rendered with next/og (Satori), so:
-// flexbox only, gradients/solid colors only (no filter/blur), inline styles.
+// og:image / twitter:image for the site.
+//
+// Satori (the @vercel/og engine) is picky: flexbox only, inline styles, and
+// only simple gradients — radial-gradient with an explicit "<size> at <pos>"
+// is NOT supported and breaks the build, so we use a linear-gradient backdrop.
+// `force-dynamic` also keeps this off the static-prerender path entirely, so a
+// render hiccup can never fail `next build`; it renders on request instead.
+export const dynamic = "force-dynamic";
 export const alt = "Fullhouse Poker — private real-money poker on Solana";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Load a real TTF for the brand display font. We provide the font explicitly
-// (rather than relying on @vercel/og's bundled default) both to stay on-brand
-// and to dodge a Windows/Turbopack bug that mangles the default font's path.
-// Trick: requesting the Google Fonts CSS without a modern UA returns TTF URLs.
+// Load a real TTF for the brand display font (on-brand + dodges @vercel/og's
+// default-font path issues). Requesting the Google Fonts CSS without a modern
+// UA returns TTF URLs that Satori can use.
 async function loadFont(weight: number): Promise<ArrayBuffer | null> {
   try {
     const css = await (
@@ -43,8 +48,7 @@ export default async function OpengraphImage() {
           justifyContent: "center",
           padding: "0 100px",
           fontFamily: "Space Grotesk, sans-serif",
-          background:
-            "radial-gradient(900px 720px at 82% -12%, rgba(59,130,246,0.26), transparent 60%), radial-gradient(820px 720px at -12% 112%, rgba(20,210,200,0.18), transparent 60%), #0d0420",
+          background: "linear-gradient(135deg, #1a0f3a 0%, #0d0420 52%, #0a0318 100%)",
         }}
       >
         {/* eyebrow */}
