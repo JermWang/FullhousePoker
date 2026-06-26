@@ -17,6 +17,7 @@ import type {
   RemoteTrack,
   RemoteTrackPublication,
   RemoteParticipant,
+  Participant,
 } from "livekit-client";
 
 export type MediaStatus = "off" | "connecting" | "on" | "error";
@@ -28,6 +29,8 @@ export interface TableMedia {
   error: string | null;
   /** seatToken -> live video MediaStreamTrack (local + remote). */
   videoBySeat: Map<string, MediaStreamTrack>;
+  /** seatTokens of participants whose mic is live AND currently talking. */
+  speakingSeats: Set<string>;
   join: () => void;
   leave: () => void;
   toggleMic: () => void;
@@ -60,6 +63,7 @@ export function useTableMedia(opts: {
   const [videoBySeat, setVideoBySeat] = useState<Map<string, MediaStreamTrack>>(
     new Map(),
   );
+  const [speakingSeats, setSpeakingSeats] = useState<Set<string>>(new Set());
 
   const roomRef = useRef<Room | null>(null);
   const lkRef = useRef<typeof import("livekit-client") | null>(null);
@@ -102,6 +106,7 @@ export function useTableMedia(opts: {
     setMicOn(false);
     setCamOn(false);
     setVideoBySeat(new Map());
+    setSpeakingSeats(new Set());
   }, []);
 
   const join = useCallback(async () => {
@@ -147,6 +152,17 @@ export function useTableMedia(opts: {
         )
         .on(RoomEvent.LocalTrackPublished, refreshVideo)
         .on(RoomEvent.LocalTrackUnpublished, refreshVideo)
+        .on(RoomEvent.ActiveSpeakersChanged, (speakers: Participant[]) => {
+          // Only count someone as "talking" when their mic is actually live —
+          // a stale active-speaker entry shouldn't pulse a muted player.
+          setSpeakingSeats(
+            new Set(
+              speakers
+                .filter((p) => p.isSpeaking && p.isMicrophoneEnabled)
+                .map((p) => seatKey(p.identity)),
+            ),
+          );
+        })
         .on(RoomEvent.ParticipantDisconnected, refreshVideo)
         .on(RoomEvent.Disconnected, () => {
           if (roomRef.current === room) leave();
@@ -190,5 +206,5 @@ export function useTableMedia(opts: {
   // Tear down on unmount / table change.
   useEffect(() => () => leave(), [leave, opts.tableId]);
 
-  return { status, micOn, camOn, error, videoBySeat, join, leave, toggleMic, toggleCam };
+  return { status, micOn, camOn, error, videoBySeat, speakingSeats, join, leave, toggleMic, toggleCam };
 }

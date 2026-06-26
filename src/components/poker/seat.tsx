@@ -50,6 +50,7 @@ export function Seat({
   isWinner,
   compact,
   videoTrack,
+  isSpeaking,
 }: {
   seat: WireSeat;
   asset: Asset;
@@ -71,6 +72,8 @@ export function Seat({
   compact?: boolean;
   /** Live camera track for this seat — turns the round avatar into a square video. */
   videoTrack?: MediaStreamTrack | null;
+  /** Mic is live and this player is actively talking — pulse a ring around them. */
+  isSpeaking?: boolean;
 }) {
   if (!seat.playerId) {
     return (
@@ -130,6 +133,18 @@ export function Seat({
 
       {/* Avatar with timer ring + dealer button */}
       <div className={cn("relative", compact && "z-10")}>
+        {/* Speaking indicator — a soft emerald ring that breathes while this
+            player's mic is live and they're actively talking. Sits just behind
+            the avatar disc and matches its shape (round / square-for-video). */}
+        {isSpeaking && (
+          <span
+            aria-hidden
+            className={cn(
+              "animate-speaking pointer-events-none absolute -inset-1 z-0",
+              videoTrack ? "rounded-xl" : "rounded-full",
+            )}
+          />
+        )}
         {isToAct && clock && (
           <svg
             viewBox="0 0 56 56"

@@ -820,6 +820,9 @@ export function PokerTableView(props: PokerTableViewProps) {
                     videoTrack={
                       s.playerId ? (media.videoBySeat.get(s.playerId) ?? null) : null
                     }
+                    isSpeaking={
+                      s.playerId ? media.speakingSeats.has(s.playerId) : false
+                    }
                   />
                 )}
               </div>
