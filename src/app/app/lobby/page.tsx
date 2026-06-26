@@ -49,11 +49,35 @@ export default async function LobbyPage() {
   // (unbonded tokens can have unreliable on-chain txs). Tables stay browsable
   // and spectatable; buy-ins are locked. Free play is unaffected.
   const paused = env.publicPlayPaused;
+  // Soft caution shown at the very top while play is OPEN but the token is still
+  // bonding — a heads-up, not a lock.
+  const warn = env.publicPlayWarning && !paused;
 
   return (
     <div className="space-y-6 py-2">
       {/* Token contract address — click-to-copy, prominent at the very top. */}
       <ContractAddressChip />
+
+      {/* Heads-up — public play is open, but the token is still bonding so
+          on-chain txs can occasionally hiccup. */}
+      {warn && (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-4 sm:p-5">
+          <span aria-hidden className="mt-0.5 text-lg">⚠️</span>
+          <div>
+            <p className="text-sm font-semibold text-amber-100">
+              Heads up — ${TOKEN_TAG} is still bonding
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-ash">
+              Public tables are open and ready to play. While the token is still
+              bonding on its launch market, on-chain transactions — buy-ins,
+              deposits, and payouts — can occasionally be delayed or fail. If one
+              doesn&apos;t go through, your funds are safe and it&apos;ll settle once
+              the token bonds. Please play at your own discretion until the price
+              stabilizes.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Hero — title on the left, live snapshot tiles on the right. */}
       <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

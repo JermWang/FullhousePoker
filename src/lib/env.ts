@@ -113,6 +113,11 @@ export const env = {
   // browsable/spectatable but buy-ins are blocked. Set PUBLIC_PLAY_PAUSED=false
   // to reopen public play once the token has bonded and the price has settled.
   publicPlayPaused: optional("PUBLIC_PLAY_PAUSED") !== "false",
+  // Soft caution banner (separate from the hard lock above): shown at the top of
+  // the lobby while the token is still bonding, even when public play is OPEN, so
+  // players know on-chain txs may occasionally hiccup. Set PUBLIC_PLAY_WARNING=
+  // false to remove it once the token has bonded.
+  publicPlayWarning: optional("PUBLIC_PLAY_WARNING") !== "false",
   isProduction: process.env.NODE_ENV === "production",
 
   // Outcome anchoring. Hands are batched into a Merkle root and posted on-chain
