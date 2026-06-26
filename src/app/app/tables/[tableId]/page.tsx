@@ -124,6 +124,7 @@ export default async function TablePage({
       requiresPassword={table.visibility === "PRIVATE" && Boolean(table.passwordHash)}
       inviteCode={table.visibility === "PRIVATE" ? table.inviteCode : null}
       voiceEnabled={voiceEnabled}
+      publicLocked={env.publicPlayPaused && table.visibility === "PUBLIC"}
     />
   );
 }

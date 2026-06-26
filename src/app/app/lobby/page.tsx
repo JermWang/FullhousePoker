@@ -45,6 +45,11 @@ export default async function LobbyPage() {
   const inPlay = data.filter((t) => t.status === "ACTIVE").length;
   const seatsTaken = data.reduce((n, t) => n + t.seatsOccupied, 0);
 
+  // Public cash games are temporarily paused while $FULLHOUSE is still bonding
+  // (unbonded tokens can have unreliable on-chain txs). Tables stay browsable
+  // and spectatable; buy-ins are locked. Free play is unaffected.
+  const paused = env.publicPlayPaused;
+
   return (
     <div className="space-y-6 py-2">
       {/* Token contract address — click-to-copy, prominent at the very top. */}
@@ -70,6 +75,30 @@ export default async function LobbyPage() {
         </div>
       </header>
 
+      {/* Temporary notice — public cash games paused while the token bonds. */}
+      {paused && (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-4 sm:p-5">
+          <span aria-hidden className="mt-0.5 text-lg">🔒</span>
+          <div>
+            <p className="text-sm font-semibold text-amber-100">
+              Public cash games are paused
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-ash">
+              <span className="font-semibold text-velvet">${TOKEN_TAG}</span> is
+              still bonding on its launch market. Until a token bonds, on-chain
+              transfers can be intermittent — so we&apos;ve temporarily paused
+              public buy-ins to keep every deposit and payout safe. You can still
+              open and spectate any table. We&apos;ll reopen public tables once the
+              coin has bonded and its price settles.
+            </p>
+            <p className="mt-2 text-sm font-medium text-emerald-200">
+              Private tables (SOL &amp; USDC) and free play are open and live
+              right now — host a game or join with an invite code.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Body — tables grid as the main column, a sticky "private play" rail
           beside it on desktop. On mobile the rail drops to the top so the
           house specialty (private games) stays prominent, then the tables. */}
@@ -91,6 +120,7 @@ export default async function LobbyPage() {
                   table={t}
                   prices={prices}
                   tokenSymbol={TOKEN_TAG}
+                  paused={paused && !t.isDemo}
                 />
               ))}
             </div>

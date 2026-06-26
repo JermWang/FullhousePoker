@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useTableSocket } from "@/lib/realtime/use-table-socket";
 import type { ServerEvent } from "@/lib/realtime/events";
 import { formatAmount, parseAmount, ASSET_SYMBOLS } from "@/lib/ledger/money";
@@ -87,6 +88,9 @@ export interface PokerTableViewProps {
   voiceEnabled?: boolean;
   /** Set on a PRIVATE table → shows the copy-invite-link bar above the felt. */
   inviteCode?: string | null;
+  /** Public play temporarily paused (token still bonding) — the table loads for
+   *  viewing/spectating, but buy-ins are locked with an explanation. */
+  publicLocked?: boolean;
 }
 
 /** The branded Fullhouse chip (neon FH disc), from /public. */
@@ -888,6 +892,33 @@ export function PokerTableView(props: PokerTableViewProps) {
               <p className="mt-1 text-xs leading-snug text-ash">
                 Tap any open seat to sit down with a free stack.
               </p>
+            </div>
+          ) : props.publicLocked ? (
+            <div className="rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-4 text-center shadow-elevated">
+              <p className="text-2xl">🔒</p>
+              <p className="mt-1 text-sm font-semibold text-amber-100">
+                Public play is paused
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-ash">
+                Buy-ins on public ${ASSET_SYMBOLS[props.asset]} tables are
+                temporarily closed. The token is still bonding, and until it does,
+                on-chain transactions can be unreliable — so we&apos;re holding off
+                to protect your funds. You&apos;re welcome to watch the action, and
+                we&apos;ll reopen public tables once the coin bonds and the price
+                settles.
+              </p>
+              <p className="mt-2 text-xs font-medium text-emerald-200">
+                Private tables (SOL &amp; USDC) and free play are open and live
+                right now.
+              </p>
+              <div className="mt-3 flex justify-center gap-2">
+                <Link href="/app/host">
+                  <Button size="sm">Host a private game</Button>
+                </Link>
+                <Link href="/app/lobby">
+                  <Button size="sm" variant="secondary">Back to lobby</Button>
+                </Link>
+              </div>
             </div>
           ) : (
             <BuyInPanel

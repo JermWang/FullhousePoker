@@ -25,23 +25,30 @@ export function HostTableForm({
   tokenSymbol,
   privateActive,
   privateMax,
+  publicPaused = false,
 }: {
   authed: boolean;
   tokenConfigured: boolean;
   tokenSymbol: string;
   privateActive: number;
   privateMax: number;
+  /** Public cash games paused (token still bonding) — hosting defaults to (and
+   *  is limited to) private games while the pause is on. */
+  publicPaused?: boolean;
 }) {
   const router = useRouter();
   const privateFull = privateActive >= privateMax;
   const privateLeft = Math.max(0, privateMax - privateActive);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Public tables must use the token; private tables may use SOL/USDC/token.
+  // Public hosting needs the token configured AND not paused. While public play
+  // is paused, only private games (SOL/USDC) can be created.
+  const publicAvailable = tokenConfigured && !publicPaused;
   const [visibility, setVisibility] = useState(
-    tokenConfigured ? "PUBLIC" : "PRIVATE",
+    publicAvailable ? "PUBLIC" : "PRIVATE",
   );
-  const [asset, setAsset] = useState(tokenConfigured ? "TOKEN" : "SOL");
+  // Public tables are token-only; private tables are SOL or USDC (SOL default).
+  const [asset, setAsset] = useState(publicAvailable ? "TOKEN" : "SOL");
 
   // Controlled copies of the fields the live summary reflects. Inputs keep their
   // `name`, so submission still reads everything off the form via FormData.
@@ -53,21 +60,20 @@ export function HostTableForm({
   const [maxBuyIn, setMaxBuyIn] = useState("");
   const [actionTimeout, setActionTimeout] = useState("30");
 
-  // Asset options allowed for the current visibility.
+  // Asset options allowed for the current visibility. Public = token only;
+  // private = SOL or USDC (SOL first / default).
   const assetOptions =
     visibility === "PUBLIC"
       ? [{ value: "TOKEN", label: tokenSymbol }]
       : [
           { value: "SOL", label: "SOL" },
           { value: "USDC", label: "USDC" },
-          ...(tokenConfigured ? [{ value: "TOKEN", label: tokenSymbol }] : []),
         ];
 
   function onVisibilityChange(next: string) {
     setVisibility(next);
-    // Force a valid asset for the new visibility (public ⇒ token only).
-    if (next === "PUBLIC") setAsset("TOKEN");
-    else if (asset === "TOKEN" && !tokenConfigured) setAsset("SOL");
+    // Force a valid asset for the new visibility: public ⇒ token, private ⇒ SOL.
+    setAsset(next === "PUBLIC" ? "TOKEN" : "SOL");
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -156,7 +162,7 @@ export function HostTableForm({
                   >
                     Asset
                     <HelpHint
-                      label={`Public tables use ${tokenSymbol} only. Private tables can use SOL, USDC, or ${tokenSymbol}.`}
+                      label={`Private tables use SOL or USDC. Public tables use ${tokenSymbol} only.`}
                     />
                   </Label>
                   <Select
@@ -286,12 +292,22 @@ export function HostTableForm({
                   value={visibility}
                   onChange={(e) => onVisibilityChange(e.target.value)}
                 >
-                  <option value="PUBLIC" disabled={!tokenConfigured}>
+                  <option value="PUBLIC" disabled={!publicAvailable}>
                     Public — listed in the lobby
-                    {!tokenConfigured ? " (token not set)" : ""}
+                    {!tokenConfigured
+                      ? " (token not set)"
+                      : publicPaused
+                        ? " (paused)"
+                        : ""}
                   </option>
                   <option value="PRIVATE">Private — invite only</option>
                 </Select>
+                {publicPaused && (
+                  <p className="mt-1 text-xs text-ash/70">
+                    Public games are paused while ${tokenSymbol} bonds — private
+                    tables (SOL/USDC) are open and live.
+                  </p>
+                )}
               </div>
 
               {visibility === "PRIVATE" && (

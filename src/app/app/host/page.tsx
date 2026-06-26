@@ -22,8 +22,8 @@ export default async function HostPage() {
           Host a table
         </h1>
         <p className="mt-2 max-w-xl text-sm text-ash">
-          Configure your game. Public tables appear in the lobby; private tables
-          are reachable by invite link or code.
+          Configure your game. Private tables are reachable by invite link or
+          code{env.publicPlayPaused ? " — and they're open and live right now." : "; public tables appear in the lobby."}
         </p>
       </div>
       <HostTableForm
@@ -32,6 +32,7 @@ export default async function HostPage() {
         tokenSymbol={env.tokenSymbol}
         privateActive={privateActive}
         privateMax={env.maxPrivateTables}
+        publicPaused={env.publicPlayPaused}
       />
     </div>
   );

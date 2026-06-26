@@ -88,11 +88,15 @@ export function TableCard({
   table,
   prices,
   tokenSymbol = "FULLHOUSE",
+  paused = false,
 }: {
   table: TableCardData;
   prices: AssetPrices;
   /** Display ticker for the house token (public cash games are wagered in it). */
   tokenSymbol?: string;
+  /** Public play temporarily paused — card stays clickable to view, but buy-in
+   *  is locked (enforced at the table). Shows a "Paused" badge + "View" CTA. */
+  paused?: boolean;
 }) {
   const live = table.status === "ACTIVE";
 
@@ -166,12 +170,18 @@ export function TableCard({
             <span className="rounded-full border border-velvet/30 bg-velvet/10 px-2.5 py-0.5 text-xs font-medium text-velvet">
               {currencyTag}
             </span>
-            <span className="flex items-center gap-1 text-[11px] text-ash">
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${live ? "bg-emerald-400" : "bg-ash/50"}`}
-              />
-              {live ? "In play" : "Waiting"}
-            </span>
+            {paused ? (
+              <span className="flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-200">
+                <span aria-hidden>🔒</span> Paused
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[11px] text-ash">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${live ? "bg-emerald-400" : "bg-ash/50"}`}
+                />
+                {live ? "In play" : "Waiting"}
+              </span>
+            )}
           </div>
         </div>
 
@@ -204,12 +214,16 @@ export function TableCard({
         <div className="relative mt-5 flex items-center justify-between">
           {table.isDemo ? (
             <span className="text-xs text-velvet/80">Free play · no deposit</span>
+          ) : paused ? (
+            <span className="text-xs text-amber-200/80">View only · buy-ins paused</span>
           ) : table.visibility === "PRIVATE" ? (
             <span className="text-xs text-ash">Private · invite only</span>
           ) : (
             <span className="text-xs text-ash">Open table</span>
           )}
-          <Button size="sm">{table.isDemo ? "Play free" : "Take a seat"}</Button>
+          <Button size="sm" variant={paused ? "secondary" : undefined}>
+            {table.isDemo ? "Play free" : paused ? "View table" : "Take a seat"}
+          </Button>
         </div>
       </div>
     </Link>

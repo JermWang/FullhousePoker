@@ -108,6 +108,11 @@ export const env = {
   // with a "wait" message once this many private games are live.
   maxPrivateTables: Number(optional("MAX_PRIVATE_TABLES") ?? "50"),
   wsPort: Number(optional("WS_PORT") ?? "3001"),
+  // Temporary lock on PUBLIC cash games while $FULLHOUSE is still bonding (an
+  // unbonded token can have unreliable on-chain txs). Public tables stay
+  // browsable/spectatable but buy-ins are blocked. Set PUBLIC_PLAY_PAUSED=false
+  // to reopen public play once the token has bonded and the price has settled.
+  publicPlayPaused: optional("PUBLIC_PLAY_PAUSED") !== "false",
   isProduction: process.env.NODE_ENV === "production",
 
   // Outcome anchoring. Hands are batched into a Merkle root and posted on-chain
