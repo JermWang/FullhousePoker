@@ -43,71 +43,113 @@ export default async function LobbyPage() {
 
   // Games actually being played (a hand in progress), vs tables merely open.
   const inPlay = data.filter((t) => t.status === "ACTIVE").length;
+  const seatsTaken = data.reduce((n, t) => n + t.seatsOccupied, 0);
 
   return (
-    <div className="space-y-10 py-2">
+    <div className="space-y-6 py-2">
       {/* Token contract address — click-to-copy, prominent at the very top. */}
       <ContractAddressChip />
 
-      {/* Private-room banner — the house specialty. */}
-      <div className="glass glass-velvet relative overflow-hidden p-7">
-        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-velvet/10 blur-3xl" />
-        <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-lg">
-            <p className="text-eyebrow">Invite-only</p>
-            <h1 className="mt-2 font-display text-3xl text-ivory">
-              The best games are private
-            </h1>
-            <p className="mt-2 text-sm leading-relaxed text-ash">
-              Host your own table in seconds, or drop in with an invite code.
-            </p>
-          </div>
-          <div className="flex flex-col items-stretch gap-3">
-            <Link href="/app/host">
-              <Button size="lg" className="w-full tracking-wide">
-                Host a private table
-              </Button>
-            </Link>
-            <JoinPrivate />
-          </div>
+      {/* Hero — title on the left, live snapshot tiles on the right. */}
+      <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-eyebrow">Open to all</p>
+          <h1 className="mt-1.5 font-display text-3xl text-ivory sm:text-4xl">
+            Public lobby
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-ash">
+            Jump into any open table, or spin up your own private game. Public
+            cash games are wagered in{" "}
+            <span className="font-semibold text-velvet">${TOKEN_TAG}</span>.
+          </p>
         </div>
-      </div>
-
-      {/* Public lobby list */}
-      <div>
-        <div className="mb-5 flex items-end justify-between">
-          <div>
-            <p className="text-eyebrow">Open to all</p>
-            <h2 className="mt-1 font-display text-2xl text-ivory">Public tables</h2>
-          </div>
-          <span className="text-sm text-ash">
-            {inPlay > 0
-              ? `${inPlay} in play · ${data.length} open`
-              : `${data.length} ${data.length === 1 ? "table" : "tables"} open`}
-          </span>
+        <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+          <StatTile label="Open" value={data.length} />
+          <StatTile label="In play" value={inPlay} accent={inPlay > 0} />
+          <StatTile label="Seated" value={seatsTaken} />
         </div>
+      </header>
 
-        {/* Public games settle in the house token only. */}
-        <p className="mb-5 inline-block rounded-lg border border-velvet/25 bg-velvet/[0.07] px-3 py-1.5 text-sm text-ivory">
-          Public games are wagered only in{" "}
-          <span className="font-semibold text-velvet">${TOKEN_TAG}</span>.
-        </p>
+      {/* Body — tables grid as the main column, a sticky "private play" rail
+          beside it on desktop. On mobile the rail drops to the top so the
+          house specialty (private games) stays prominent, then the tables. */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        {/* Public tables */}
+        <section className="order-2 lg:order-1">
+          {data.length === 0 ? (
+            <div className="glass p-12 text-center">
+              <p className="text-ash">No public tables are open right now.</p>
+              <Link href="/app/host" className="mt-4 inline-block">
+                <Button>Be the first to host</Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2">
+              {data.map((t) => (
+                <TableCard
+                  key={t.id}
+                  table={t}
+                  prices={prices}
+                  tokenSymbol={TOKEN_TAG}
+                />
+              ))}
+            </div>
+          )}
+        </section>
 
-        {data.length === 0 ? (
-          <div className="glass p-12 text-center">
-            <p className="text-ash">No public tables are open right now.</p>
-            <Link href="/app/host" className="mt-4 inline-block">
-              <Button>Be the first to host</Button>
-            </Link>
+        {/* Private-play rail — the house specialty. */}
+        <aside className="order-1 lg:order-2 lg:sticky lg:top-6">
+          <div className="glass glass-velvet relative overflow-hidden p-6">
+            <div className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-velvet/10 blur-3xl" />
+            <div className="relative">
+              <p className="text-eyebrow">Invite-only</p>
+              <h2 className="mt-2 font-display text-2xl leading-tight text-ivory">
+                The best games are private
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-ash">
+                Host your own table in seconds, or drop in with an invite code.
+              </p>
+              <Link href="/app/host" className="mt-5 block">
+                <Button size="lg" className="w-full tracking-wide">
+                  Host a private table
+                </Button>
+              </Link>
+              <div className="my-4 flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-ash/50">
+                <span className="h-px flex-1 bg-white/10" />
+                or join with a code
+                <span className="h-px flex-1 bg-white/10" />
+              </div>
+              <JoinPrivate />
+            </div>
           </div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {data.map((t) => (
-              <TableCard key={t.id} table={t} prices={prices} tokenSymbol={TOKEN_TAG} />
-            ))}
-          </div>
-        )}
+        </aside>
       </div>
+    </div>
+  );
+}
+
+/** Compact live-snapshot tile for the lobby hero. */
+function StatTile({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: number;
+  accent?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2.5 text-center sm:px-4">
+      <p
+        className={`font-display text-2xl leading-none ${
+          accent ? "text-emerald-300" : "text-ivory"
+        }`}
+      >
+        {value}
+      </p>
+      <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-ash/60">
+        {label}
+      </p>
     </div>
   );
 }

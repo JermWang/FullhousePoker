@@ -15,11 +15,13 @@ export default async function HostPage() {
     where: { visibility: "PRIVATE", status: { in: ["WAITING", "ACTIVE"] } },
   });
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8">
       <div>
         <p className="text-eyebrow">Create a cash game</p>
-        <h1 className="mt-2 font-display text-3xl text-ivory">Host a table</h1>
-        <p className="mt-2 text-sm text-ash">
+        <h1 className="mt-2 font-display text-3xl text-ivory sm:text-4xl">
+          Host a table
+        </h1>
+        <p className="mt-2 max-w-xl text-sm text-ash">
           Configure your game. Public tables appear in the lobby; private tables
           are reachable by invite link or code.
         </p>
